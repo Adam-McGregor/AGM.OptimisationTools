@@ -7,6 +7,11 @@
 public interface ICombinatorialMemoryReserve<T> where T : struct
 {
     /// <summary>
+    /// The number of items available to combine
+    /// </summary>
+    public byte N { get; init; }
+
+    /// <summary>
     /// gets a reference to the object
     /// </summary>
     /// <param name="id">the id of the object</param>

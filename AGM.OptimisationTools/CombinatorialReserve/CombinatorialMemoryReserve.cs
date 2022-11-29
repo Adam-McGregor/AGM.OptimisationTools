@@ -10,7 +10,7 @@ public sealed class CombinatorialMemoryReserve<T> : ICombinatorialMemoryReserve<
 {
     private readonly Memory<T> _data;
     private readonly Memory<int> _tiers;
-    private readonly byte _n;
+    public byte N { get; init; }
     /// <summary>
     /// references all of the k combinations (zero indexed)
     /// That is,    k = 0 => all single combinations,
@@ -66,7 +66,7 @@ public sealed class CombinatorialMemoryReserve<T> : ICombinatorialMemoryReserve<
         // store the fields
         Combinations = size;
         _data = new T[size];
-        _n = n;
+        N = n;
         Buckets = new Memory<T>[limit];
         _tiers = new int[limit];
 
@@ -88,10 +88,10 @@ public sealed class CombinatorialMemoryReserve<T> : ICombinatorialMemoryReserve<
 
         // rank the combination
         byte k = (byte)ids.Length;
-        int index = Choose(_n, k);
+        int index = Choose(N, k);
         for (byte i = 0; i < k; i++)
         {
-            index -= Choose((byte)( _n - ids[i] - 1 ), (byte)( k - i ));
+            index -= Choose((byte)( N - ids[i] - 1 ), (byte)( k - i ));
         }
         index--;
         return _tiers.Span[ids.Length - 1] + index;
