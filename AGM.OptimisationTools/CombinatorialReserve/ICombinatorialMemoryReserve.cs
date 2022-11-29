@@ -19,11 +19,11 @@ public interface ICombinatorialMemoryReserve<T> where T : struct
     int Combinations { get; init; }
 
     /// <summary>
-    /// Gets the index of the object corresponding to the ids relative to the its bucket
+    /// Gets the index of the object corresponding to the ids
     /// Sets the IReservable properties for the type T that belongs to the index
     /// </summary>
     /// <param name="ids">the unique natural numbers in acending order</param>
-    /// <returns>the index of the object corresponding to the ids relative to the its bucket</returns>
+    /// <returns>the index of the object corresponding to the ids</returns>
     /// <exception cref="IndexOutOfRangeException">the number of ids should correspond to a bucket</exception>
     /// <remarks>ranks combinations in lexicographic order</remarks>
     int GetId(Span<byte> ids);
