@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33110.190
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AGM.OptimisationTools", "AGM.OptimisationTools\AGM.OptimisationTools.csproj", "{98F1CA66-5D6C-40FA-BC1C-5A7A5534BD32}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{4C0D88A8-A6F7-4670-BA43-725B52C83654}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{98F1CA66-5D6C-40FA-BC1C-5A7A5534BD32}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{98F1CA66-5D6C-40FA-BC1C-5A7A5534BD32}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{98F1CA66-5D6C-40FA-BC1C-5A7A5534BD32}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{98F1CA66-5D6C-40FA-BC1C-5A7A5534BD32}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4C0D88A8-A6F7-4670-BA43-725B52C83654}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4C0D88A8-A6F7-4670-BA43-725B52C83654}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4C0D88A8-A6F7-4670-BA43-725B52C83654}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4C0D88A8-A6F7-4670-BA43-725B52C83654}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C324A3D9-71E9-480F-94CD-B1EE091E23D2}
+	EndGlobalSection
+EndGlobal
