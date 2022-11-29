@@ -6,9 +6,10 @@ namespace AGM.OptimisationTools.CombinatorialReserve;
 /// A class for reserving contiguous memory for all combinations of natural numbers (including 0), up to some value
 /// </summary>
 /// <typeparam name="T">The object being stored in memory</typeparam>
-public sealed class CombinatorialMemoryReserve<T> : ICombinatorialMemoryReserve<T> where T : struct
+public sealed class CombinatorialMemoryReserve<T> : ICombinatorialMemoryReserve<T> where T : struct, IReservable<T>
 {
-    private readonly T[] _data;
+    private readonly Memory<T> _data;
+    private readonly Memory<int> _tiers;
     private readonly byte _n;
     /// <summary>
     /// references all of the k combinations (zero indexed)
@@ -19,12 +20,9 @@ public sealed class CombinatorialMemoryReserve<T> : ICombinatorialMemoryReserve<
     public Memory<T>[] Buckets { get; init; }
     public int Combinations { get; init; }
 
-    public ref T this[byte bucketId, int id]
+    public ref T this[int id]
     {
-        get
-        {
-            return ref Buckets[bucketId - 1].Span[id];
-        }
+        get { return ref _data.Span[id]; }
     }
 
     /// <summary>
@@ -70,18 +68,20 @@ public sealed class CombinatorialMemoryReserve<T> : ICombinatorialMemoryReserve<
         _data = new T[size];
         _n = n;
         Buckets = new Memory<T>[limit];
+        _tiers = new int[limit];
 
         // make the buckets
         int u = 0;
         for (byte i = 0; i < limit; i++)
         {
             int v = kth[i];
-            Buckets[i] = new(_data, u, v);
+            Buckets[i] = _data.Slice(u, v);
+            _tiers.Span[i] = u;
             u += v;
         }
     }
 
-    public IReserved<T> RankAndReserve(scoped Span<byte> ids)
+    public IReserved RankAndReserve(scoped Span<byte> ids)
     {
         if (ids.Length > Buckets.Length)
             throw new IndexOutOfRangeException(nameof(ids));
@@ -97,11 +97,11 @@ public sealed class CombinatorialMemoryReserve<T> : ICombinatorialMemoryReserve<
 
         // reserve the combination
         ref T t = ref Buckets[ids.Length - 1].Span[index];
-        return new Reserved<T>(this)
+        var reserved = t.Reserved ?? new Reserved()
         {
-            Id = index,
-            BucketId = (byte)ids.Length
+            Id = _tiers.Span[ids.Length - 1] + index
         };
+        return reserved;
     }
 
     /// <summary>

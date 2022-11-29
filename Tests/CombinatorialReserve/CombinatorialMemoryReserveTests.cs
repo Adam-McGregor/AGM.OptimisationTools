@@ -1,5 +1,7 @@
 using AGM.OptimisationTools.CombinatorialReserve;
 
+using System.Numerics;
+
 namespace Tests.CombinatorialReserve;
 
 public class CombinatorialMemoryReserveTests
@@ -44,8 +46,16 @@ public class CombinatorialMemoryReserveTests
             (combo, _) =>
             {
                 var reserved = reserve.RankAndReserve(combo);
-                ref var item = ref reserved.Get();
-                item.Payload = reserved.Id;
+
+                byte k = (byte)combo.Length;
+                int index = Choose(n, k);
+                for (byte i = 0; i < k; i++)
+                {
+                    index -= Choose((byte)( n - combo[i] - 1 ), (byte)( k - i ));
+                }
+                index--;
+                ref var item = ref reserve[reserved.Id];
+                item.Payload = index;
             });
 
         var bucket = reserve.Buckets[k - 1];
@@ -73,7 +83,7 @@ public class CombinatorialMemoryReserveTests
 
     [Theory]
     [MemberData(nameof(CorrectMappingData))]
-    public void CorrectMapping1(byte a, byte b, byte c, int index)
+    public void CorrectMapping(byte a, byte b, byte c, int index)
     {
         byte n = 5;
         byte k = 3;
@@ -81,49 +91,34 @@ public class CombinatorialMemoryReserveTests
 
         byte[] ids = new[] { a, b, c };
         var reserved = reserve.RankAndReserve(ids);
-        ref var item = ref reserved.Get();
+        ref var item = ref reserve[reserved.Id];
         item.Payload = 20;
 
         int expected = reserve.Buckets[k - 1].Span[index].Payload;
-        Assert.Equal(expected, reserve[(byte)ids.Length, reserved.Id].Payload);
+        Assert.Equal(expected, reserve[reserved.Id].Payload);
     }
 
-    [Theory]
-    [MemberData(nameof(CorrectMappingData))]
-    public void CorrectMapping2(byte a, byte b, byte c, int index)
+    /// <summary>
+    /// code for n choose k
+    /// </summary>
+    /// <param name="n">number of items</param>
+    /// <param name="k">number of items to choose</param>
+    /// <returns>n choose k</returns>
+    /// <see cref="https://visualstudiomagazine.com/articles/2022/07/20/math-combinations-using-csharp.aspx"/>
+    /// <remarks>code modified from link</remarks>
+    private static int Choose(byte n, byte k)
     {
-        byte n = 5;
-        byte k = 3;
-        CombinatorialMemoryReserve<TestStruct> reserve = new(n, k);
+        int delta = n - k;
+        BigInteger ans = delta + 1;
+        for (int i = 2; i <= k; ++i)
+            ans = ans * ( delta + i ) / i;
 
-        byte[] ids = new[] { a, b, c };
-        var reserved = reserve.RankAndReserve(ids);
-        ref var item = ref reserved.Get();
-        item.Payload = 20;
-
-        int expected = reserve.Buckets[k - 1].Span[index].Payload;
-        Assert.Equal(expected, reserve[reserved.BucketId, reserved.Id].Payload);
-    }
-
-    [Theory]
-    [MemberData(nameof(CorrectMappingData))]
-    public void CorrectMapping3(byte a, byte b, byte c, int index)
-    {
-        byte n = 5;
-        byte k = 3;
-        CombinatorialMemoryReserve<TestStruct> reserve = new(n, k);
-
-        byte[] ids = new[] { a, b, c };
-        var reserved = reserve.RankAndReserve(ids);
-        ref var item = ref reserved.Get();
-        item.Payload = 20;
-
-        int expected = reserve.Buckets[k - 1].Span[index].Payload;
-        Assert.Equal(expected, reserved.Get().Payload);
+        return (int)ans;
     }
 }
 
-file struct TestStruct
+file struct TestStruct : IReservable<TestStruct>
 {
     public int Payload { get; set; }
+    IReserved? IReservable<TestStruct>.Reserved { get; set; }
 }
