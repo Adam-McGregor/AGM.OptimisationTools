@@ -45,17 +45,17 @@ public class CombinatorialMemoryReserveTests
         Parallel.ForEach(nums.Combinations(k),
             (combo, _) =>
             {
-                var reserved = reserve.RankAndReserve(combo);
+                var id = reserve.GetId(combo);
 
                 byte k = (byte)combo.Length;
-                int index = Choose(n, k);
+                int rank = Choose(n, k);
                 for (byte i = 0; i < k; i++)
                 {
-                    index -= Choose((byte)( n - combo[i] - 1 ), (byte)( k - i ));
+                    rank -= Choose((byte)( n - combo[i] - 1 ), (byte)( k - i ));
                 }
-                index--;
-                ref var item = ref reserve[reserved.Id];
-                item.Payload = index;
+                rank--;
+                ref var item = ref reserve[id];
+                item.Payload = rank;
             });
 
         var bucket = reserve.Buckets[k - 1];
@@ -90,12 +90,12 @@ public class CombinatorialMemoryReserveTests
         CombinatorialMemoryReserve<TestStruct> reserve = new(n, k);
 
         byte[] ids = new[] { a, b, c };
-        var reserved = reserve.RankAndReserve(ids);
-        ref var item = ref reserve[reserved.Id];
+        var id = reserve.GetId(ids);
+        ref var item = ref reserve[id];
         item.Payload = 20;
 
         int expected = reserve.Buckets[k - 1].Span[index].Payload;
-        Assert.Equal(expected, reserve[reserved.Id].Payload);
+        Assert.Equal(expected, reserve[id].Payload);
     }
 
     /// <summary>
@@ -117,8 +117,7 @@ public class CombinatorialMemoryReserveTests
     }
 }
 
-file struct TestStruct : IReservable<TestStruct>
+file struct TestStruct
 {
     public int Payload { get; set; }
-    IReserved? IReservable<TestStruct>.Reserved { get; set; }
 }

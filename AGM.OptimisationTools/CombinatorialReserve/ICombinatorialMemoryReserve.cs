@@ -4,12 +4,12 @@
 /// An interface for managing contiguous memory for all combinations of natural numbers (including 0), up to some value
 /// </summary>
 /// <typeparam name="T">The object being stored in memory</typeparam>
-public interface ICombinatorialMemoryReserve<T> where T : struct, IReservable<T>
+public interface ICombinatorialMemoryReserve<T> where T : struct
 {
     /// <summary>
     /// gets a reference to the object
     /// </summary>
-    /// <param name="id">the of the object</param>
+    /// <param name="id">the id of the object</param>
     /// <returns>a reference to the object</returns>
     ref T this[int id] { get; }
 
@@ -26,5 +26,5 @@ public interface ICombinatorialMemoryReserve<T> where T : struct, IReservable<T>
     /// <returns>the index of the object corresponding to the ids relative to the its bucket</returns>
     /// <exception cref="IndexOutOfRangeException">the number of ids should correspond to a bucket</exception>
     /// <remarks>ranks combinations in lexicographic order</remarks>
-    IReserved RankAndReserve(Span<byte> ids);
+    int GetId(Span<byte> ids);
 }

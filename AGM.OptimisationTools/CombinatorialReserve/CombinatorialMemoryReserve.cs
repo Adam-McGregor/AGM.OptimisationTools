@@ -6,7 +6,7 @@ namespace AGM.OptimisationTools.CombinatorialReserve;
 /// A class for reserving contiguous memory for all combinations of natural numbers (including 0), up to some value
 /// </summary>
 /// <typeparam name="T">The object being stored in memory</typeparam>
-public sealed class CombinatorialMemoryReserve<T> : ICombinatorialMemoryReserve<T> where T : struct, IReservable<T>
+public sealed class CombinatorialMemoryReserve<T> : ICombinatorialMemoryReserve<T> where T : struct
 {
     private readonly Memory<T> _data;
     private readonly Memory<int> _tiers;
@@ -81,7 +81,7 @@ public sealed class CombinatorialMemoryReserve<T> : ICombinatorialMemoryReserve<
         }
     }
 
-    public IReserved RankAndReserve(scoped Span<byte> ids)
+    public int GetId(scoped Span<byte> ids)
     {
         if (ids.Length > Buckets.Length)
             throw new IndexOutOfRangeException(nameof(ids));
@@ -94,14 +94,7 @@ public sealed class CombinatorialMemoryReserve<T> : ICombinatorialMemoryReserve<
             index -= Choose((byte)( _n - ids[i] - 1 ), (byte)( k - i ));
         }
         index--;
-
-        // reserve the combination
-        ref T t = ref Buckets[ids.Length - 1].Span[index];
-        var reserved = t.Reserved ?? new Reserved()
-        {
-            Id = _tiers.Span[ids.Length - 1] + index
-        };
-        return reserved;
+        return _tiers.Span[ids.Length - 1] + index;
     }
 
     /// <summary>
