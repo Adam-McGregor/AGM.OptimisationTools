@@ -4,7 +4,7 @@
 /// An interface for managing contiguous memory for all combinations of natural numbers (including 0), up to some value
 /// </summary>
 /// <typeparam name="T">The object being stored in memory</typeparam>
-public interface ICombinatorialMemoryReserve<T> where T : struct
+public interface ICombinatorialMemoryReserve<T> where T : struct, IReserved
 {
     /// <summary>
     /// The number of items available to combine

@@ -66,7 +66,7 @@ public class CombinatorialMemoryReserveTests
             });
     }
 
-    public static IEnumerable<object[]> CorrectMappingData()
+    public static IEnumerable<object[]> CorrectRankingData()
     {
         yield return new object[] { 0, 1, 2, 0 };
         yield return new object[] { 0, 1, 2, 0 };
@@ -82,8 +82,8 @@ public class CombinatorialMemoryReserveTests
     }
 
     [Theory]
-    [MemberData(nameof(CorrectMappingData))]
-    public void CorrectMapping(byte a, byte b, byte c, int index)
+    [MemberData(nameof(CorrectRankingData))]
+    public void CorrectRanking(byte a, byte b, byte c, int index)
     {
         byte n = 5;
         byte k = 3;
@@ -96,6 +96,31 @@ public class CombinatorialMemoryReserveTests
 
         int expected = reserve.Buckets[k - 1].Span[index].Payload;
         Assert.Equal(expected, reserve[id].Payload);
+    }
+
+    [Theory]
+    [InlineData(0, 1, 2)]
+    [InlineData(0, 3, 4)]
+    [InlineData(2, 3, 4)]
+    [InlineData(1, 2, 4)]
+    public void CorrectIds(byte a, byte b, byte c)
+    {
+        byte n = 5;
+        byte k = 3;
+
+        CombinatorialMemoryReserve<TestStruct> reserve = new(n, k);
+
+        byte[] ids = new[] { a, b, c };
+        var id = reserve.GetId(ids);
+        ref var item = ref reserve[id];
+        Memory<byte> actual = item.Ids;
+
+        Memory<byte> expected = ids;
+
+        for (int i = 0; i < k; i++)
+        {
+            Assert.Equal(expected.Span[i], actual.Span[i]);
+        }
     }
 
     /// <summary>
@@ -117,7 +142,12 @@ public class CombinatorialMemoryReserveTests
     }
 }
 
-file struct TestStruct
+file struct TestStruct : IReserved
 {
     public int Payload { get; set; }
+    public Memory<byte> Ids { get; set; }
+
+    public void Init()
+    {
+    }
 }
