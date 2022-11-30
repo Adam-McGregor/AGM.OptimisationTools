@@ -96,10 +96,10 @@ public sealed class CombinatorialMemoryReserve<T> : ICombinatorialMemoryReserve<
         index--;
         index = _tiers.Span[ids.Length - 1] + index;
         ref var reserved = ref _data.Span[index];
-        if (reserved.Ids.Length != ids.Length)
+        if (!reserved.Initialised)
         {
             reserved.Ids = ids.ToArray();
-            reserved.Init();
+            reserved.Initialise();
         }
         return index;
     }

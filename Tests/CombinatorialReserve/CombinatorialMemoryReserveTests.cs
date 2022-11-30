@@ -120,6 +120,7 @@ public class CombinatorialMemoryReserveTests
         for (int i = 0; i < k; i++)
         {
             Assert.Equal(expected.Span[i], actual.Span[i]);
+            Assert.True(((IReserved)item).Initialised);
         }
     }
 
@@ -147,7 +148,7 @@ file struct TestStruct : IReserved
     public int Payload { get; set; }
     public Memory<byte> Ids { get; set; }
 
-    public void Init()
+    public void Initialise()
     {
     }
 }
