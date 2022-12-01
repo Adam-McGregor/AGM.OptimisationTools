@@ -2,17 +2,29 @@
 
 namespace AGM.OptimisationTools.ModelBasedLearning;
 
+/// <summary>
+/// The distance metric to use for the linkage tree
+/// </summary>
+/// <typeparam name="T">The object being stored in memory</typeparam>
+/// <param name="x">the first object</param>
+/// <param name="y">the second object</param>
+/// <returns>the distance between the two objects</returns>
 public delegate double Distance<T>(ref T x, ref T y) where T : struct, IReserved;
 
 /// <summary>
 /// A linkage tree or hierarchical cluster
 /// </summary>
-/// <typeparam name="T"></typeparam>
+/// <typeparam name="T">The object being stored in memory</typeparam>
 public sealed class LinkageTree<T> where T : struct, IReserved
 {
     private readonly ICombinatorialMemoryReserve<T> _reserve;
     public Stack<int> Stack { get; }
 
+    /// <summary>
+    /// initialises a linkage tree
+    /// </summary>
+    /// <param name="reserve">the meomry reserve the objects are inside</param>
+    /// <param name="distance">the distance metric to use</param>
     public LinkageTree(ICombinatorialMemoryReserve<T> reserve, Distance<T> distance)
     {
         _reserve = reserve;
